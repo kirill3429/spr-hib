@@ -2,6 +2,7 @@ package spring.mvc.hib.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,7 +11,7 @@ import spring.mvc.hib.models.User;
 import java.util.List;
 @Service
 public class UserDaoImpl implements UserDao {
-
+    @PersistenceContext
     private final EntityManager entityManager;
 
     @Autowired
@@ -22,9 +23,7 @@ public class UserDaoImpl implements UserDao {
     @Transactional
     @Override
     public void addUser(User user) {
-        entityManager.getTransaction().begin();
         entityManager.persist(user);
-        entityManager.getTransaction().commit();
     }
 
     @Transactional(readOnly = true)
@@ -45,6 +44,7 @@ public class UserDaoImpl implements UserDao {
         return entityManager.createQuery("SELECT users FROM User users", User.class).getResultList();
     }
 
+    @Transactional
     @Override
     public void update(Long id, User user) {
         User userToUpdate = entityManager.find(User.class, id);
